@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 void main() {
   runApp(
@@ -6,23 +7,23 @@ void main() {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.amberAccent,
           title: Text(
             "Login Screen",
-            style: TextStyle(color: Colors.white, fontSize: 20),
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
+          backgroundColor: Colors.amberAccent,
           centerTitle: true,
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset('assets/eternalsunshinearianagrandewallpaper.png'),
-            Text("Login screen"),
+            Image.asset('assets/arianagrande.jpg', height: 150, width: 200),
+            Text("Login Screen"),
             SizedBox(height: 30),
-            Text("Enter username"),
+            Text("Enter Username"),
             TextField(),
-            Text("Enter password"),
+            Text("Enter Password"),
             TextField(),
             SizedBox(height: 30),
             MaterialButton(
@@ -30,12 +31,12 @@ void main() {
               child: Text(
                 "Login",
                 style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w900,
                   fontSize: 30,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
                 ),
               ),
-              color: Colors.blue,
+              color: Colors.blueAccent,
             ),
           ],
         ),
