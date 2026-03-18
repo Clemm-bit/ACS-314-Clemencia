@@ -4,14 +4,14 @@ import 'package:flutter_application_1/configs/colors.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 
-class DashBoard extends StatefulWidget {
-  const DashBoard({super.key});
+class CartsScreen extends StatefulWidget {
+  const CartsScreen({super.key});
 
   @override
-  State<DashBoard> createState() => _DashBoardState();
+  State<CartsScreen> createState() => _CartsScreenState();
 }
 
-class _DashBoardState extends State<DashBoard> {
+class _CartsScreenState extends State<CartsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +29,7 @@ class _DashBoardState extends State<DashBoard> {
         onTap: (index) {
           if (index == 0) {
             Get.toNamed("/dashboard");
-            //Navigator.pushReplacementNamed(context,"/dashboard"); //Handle button tap
+            //Navigator.pushReplacementNamed(context,"/dashboard" ); //Handle button tap
           } else if (index == 1) {
             Get.toNamed("/categories");
             //Navigator.pushReplacementNamed(context, "/categories");
@@ -46,19 +46,41 @@ class _DashBoardState extends State<DashBoard> {
         },
       ),
       appBar: AppBar(
-        title: Container(
-          height: 40,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.0),
-            color: searchBarColor,
-          ),
-          child: TextField(
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.search),
-              hintText: "Search for product here",
-            ),
-          ),
+        title: Text(
+          "Cart",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
         ),
+      ),
+      body: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "There are no items in the cart",
+                style: TextStyle(fontSize: 15),
+              ),
+            ],
+          ),
+          SizedBox(height: 15.0),
+          GestureDetector(
+            child: Padding(
+              padding: const EdgeInsets.all(70.0),
+              child: Container(
+                height: 40,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(color: primaryColor),
+                child: Text(
+                  "Go Shopping",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            ),
+            onTap: () {
+              Get.toNamed("/dashboard");
+            },
+          ),
+        ],
       ),
     );
   }
