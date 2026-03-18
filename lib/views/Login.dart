@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/configs/colors.dart';
+import 'package:flutter_application_1/controllers/logincontroller.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+
+Logincontroller logincontroller = Get.put(Logincontroller());
+TextEditingController usernameController = TextEditingController();
+TextEditingController passwordController = TextEditingController();
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -53,6 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               SizedBox(height: 10),
               TextField(
+                controller: usernameController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
@@ -78,14 +85,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               SizedBox(height: 10),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
+              Obx(
+                () => TextField(
+                  obscureText: !logincontroller.isPasswordVisible.value,
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    hintText: "sister",
+                    prefixIcon: Icon(Icons.key),
+                    suffixIcon: GestureDetector(
+                      child: Icon(
+                        logincontroller.isPasswordVisible.value
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onTap: () {
+                        logincontroller.togglePassword();
+                      },
+                    ),
                   ),
-                  hintText: "sister",
-                  prefixIcon: Icon(Icons.key),
-                  suffixIcon: Icon(Icons.visibility_off),
                 ),
               ),
               SizedBox(height: 30),
@@ -104,7 +124,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 onTap: () {
-                  Get.offAndToNamed("/homescreen");
+                  bool success = logincontroller.login(
+                    usernameController.text,
+                    passwordController.text,
+                  );
+                  if (success) {
+                    Get.offAndToNamed("/homescreen");
+                  } else {
+                    Get.snackbar(
+                      "Login Failed",
+                      "Invalid username or password",
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  }
                 },
               ),
               Padding(
