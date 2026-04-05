@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/configs/colors.dart';
 import 'package:flutter_application_1/controllers/logincontroller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:http/http.dart' as http;
 
 Logincontroller logincontroller = Get.put(Logincontroller());
 TextEditingController usernameController = TextEditingController();
@@ -64,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  hintText: "Use email or phone number",
+                  hintText: "Use email",
                   prefixIcon: Icon(Icons.person),
                 ),
               ),
@@ -123,20 +126,47 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),
-                onTap: () {
-                  bool success = logincontroller.login(
-                    usernameController.text,
-                    passwordController.text,
-                  );
-                  if (success) {
-                    Get.offAndToNamed("/homescreen");
+                onTap: () async {
+                  if (usernameController.text.isEmpty) {
+                    Get.snackbar("Error", "Enter email address");
+                  } else if (passwordController.text.isEmpty) {
+                    Get.snackbar("Erro", "Enter password");
                   } else {
-                    Get.snackbar(
-                      "Login Failed",
-                      "Invalid username or password",
-                      snackPosition: SnackPosition.BOTTOM,
+                    final response = await http.get(
+                      Uri.parse(
+                        "http://10.7.2.210/rootFolder/login.php?emailaddress=${usernameController.text}&password=${passwordController.text}",
+                      ),
                     );
+                    if (response.statusCode == 200) {
+                      final serverData = jsonDecode(response.body);
+                      if (serverData['code'] == 1) {
+                        String emailaddress =
+                            serverData["userdetails"][0]["emailaddress"];
+                        print(emailaddress); //stored in shared pref
+                        Get.toNamed("/homescreen");
+                      } else {
+                        Get.snackbar("Error", serverData["message"]);
+                      }
+                    } else {
+                      Get.snackbar(
+                        "Server error",
+                        "Error occurred when logging in",
+                      );
+                    }
                   }
+                  // bool success = logincontroller.login(
+                  //   usernameController.text,
+                  //   passwordController.text,
+                  // );
+                  // if (success) {
+                  //   Get.offAndToNamed("/homescreen");
+                  // } else {
+                  //   Get.snackbar(
+                  //     "Login Failed",
+                  //     "Invalid username or password",
+                  //     snackPosition: SnackPosition.BOTTOM,
+                  //   );
+                  // }
                 },
               ),
               Padding(

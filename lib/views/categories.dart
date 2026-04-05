@@ -80,21 +80,26 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(40.0),
-                  child: Container(
-                    height: 400.0,
-                    width: 400.0,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(color: Colors.black, width: 2.0),
-                      image: DecorationImage(
-                        image: AssetImage("shoes.webp"),
-                        fit: BoxFit.cover,
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.toNamed("/shoes");
+                    },
+                    child: Container(
+                      height: 400.0,
+                      width: 400.0,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        border: Border.all(color: Colors.black, width: 2.0),
+                        image: DecorationImage(
+                          image: AssetImage("shoes.webp"),
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      "Shoes",
-                      style: TextStyle(fontSize: 20, color: Colors.black),
+                      child: Text(
+                        "Shoes",
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      ),
                     ),
                   ),
                 ),
