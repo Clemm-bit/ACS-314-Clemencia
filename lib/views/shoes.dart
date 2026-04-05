@@ -106,6 +106,20 @@ class _shoesScreenState extends State<shoesScreen> {
                             style: TextStyle(fontSize: 14, color: Colors.black),
                             overflow: TextOverflow.ellipsis,
                           ),
+                          SizedBox(height: 5.0),
+                          Container(
+                            height: 40,
+                            width: 100,
+                            alignment: Alignment.center,
+                            color: primaryColor,
+                            child: Text(
+                              "Add to cart",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],
