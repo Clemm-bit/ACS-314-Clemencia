@@ -4,6 +4,7 @@ import 'package:flutter_application_1/views/dashboard.dart';
 import 'package:flutter_application_1/views/homescreen.dart';
 import 'package:flutter_application_1/views/login.dart';
 import 'package:flutter_application_1/views/orders.dart';
+import 'package:flutter_application_1/views/productcategories.dart';
 import 'package:flutter_application_1/views/profile.dart';
 import 'package:flutter_application_1/views/shoes.dart';
 import 'package:flutter_application_1/views/signup.dart';
@@ -19,4 +20,5 @@ var routes = [
   GetPage(name: "/categories", page: () => CategoriesScreen()),
   GetPage(name: "/orders", page: () => OrdersScreen()),
   GetPage(name: "/shoes", page: () => shoesScreen()),
+  GetPage(name: "/products", page: () => ProductsCategoriesSCreen()),
 ];

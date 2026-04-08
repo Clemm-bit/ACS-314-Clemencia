@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/configs/colors.dart';
-import 'package:flutter_application_1/models/shoesmodel.dart';
+import 'package:flutter_application_1/models/productsmodel.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:http/http.dart' as http;
@@ -30,7 +30,7 @@ class _shoesScreenState extends State<shoesScreen> {
 
   fetchShoes() async {
     var response = await http.get(
-      Uri.parse("http://10.7.2.210/rootFolder/readshoes.php"),
+      Uri.parse("http://10.7.2.210/rootFolder/products.php?categories_id=2"),
     );
 
     print("Status code: ${response.statusCode}");
@@ -40,11 +40,13 @@ class _shoesScreenState extends State<shoesScreen> {
       var shoeData = serverData["data"];
       for (var shoe in shoeData) {
         myShoes.add(
-          Shoe(
-            name: shoe["name"],
+          Products(
+            name: shoe["product_name"],
             desc: shoe["description"],
-            image: shoe["image"],
+            image: shoe["image_url"],
             price: shoe["price"],
+            stock: shoe["stock"],
+            categories_id: shoe["categories_id"],
           ),
         );
       }

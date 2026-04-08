@@ -66,23 +66,23 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
-      appBar: AppBar(
-        title: Container(
-          //color: searchBarColor,
-          height: 40,
-          child: TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              hintText: "Search product by name",
-              prefixIcon: Icon(Icons.search),
-              filled: true,
-              fillColor: searchBarColor,
-            ),
-          ),
-        ),
-      ),
+      // appBar: AppBar(
+      //   title: Container(
+      //     //color: searchBarColor,
+      //     height: 40,
+      //     child: TextField(
+      //       decoration: InputDecoration(
+      //         border: OutlineInputBorder(
+      //           borderRadius: BorderRadius.circular(20.0),
+      //         ),
+      //         hintText: "Search product by name",
+      //         prefixIcon: Icon(Icons.search),
+      //         filled: true,
+      //         fillColor: searchBarColor,
+      //       ),
+      //     ),
+      //   ),
+      // ),
       body: Obx(() => myscreens[homescreenController.selectedScreen.value]),
       // Stack(
       //   children: [
