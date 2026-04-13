@@ -1,6 +1,8 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/configs/colors.dart';
+import 'package:flutter_application_1/controllers/cartcontroller.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 
@@ -12,6 +14,7 @@ class CartsScreen extends StatefulWidget {
 }
 
 class _CartsScreenState extends State<CartsScreen> {
+  CartContoller cartContoller = Get.find();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,37 +54,101 @@ class _CartsScreenState extends State<CartsScreen> {
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
         ),
       ),
-      body: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+      body: Obx(() {
+        if (cartContoller.cartItems.isEmpty) {
+          return Column(
             children: [
-              Text(
-                "There are no items in the cart",
-                style: TextStyle(fontSize: 15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "There are no items in the cart",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15.0),
+              GestureDetector(
+                child: Padding(
+                  padding: const EdgeInsets.all(70.0),
+                  child: Container(
+                    height: 40,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(color: primaryColor),
+                    child: Text(
+                      "Go Shopping",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  Get.toNamed("/categories");
+                },
               ),
             ],
-          ),
-          SizedBox(height: 15.0),
-          GestureDetector(
-            child: Padding(
-              padding: const EdgeInsets.all(70.0),
-              child: Container(
-                height: 40,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(color: primaryColor),
-                child: Text(
-                  "Go Shopping",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+          );
+        } else {
+          return ListView.builder(
+            itemCount: cartContoller.cartItems.length,
+            itemBuilder: (context, index) {
+              final item = cartContoller.cartItems[index];
+
+              return ListTile(
+                leading: Image.network(
+                  // ignore: prefer_interpolation_to_compose_strings
+                  "http://10.7.21.26/rootFolder/Image.php?image=" + item.image,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons.broken_image);
+                  },
                 ),
-              ),
-            ),
-            onTap: () {
-              Get.toNamed("/dashboard");
+
+                title: Text(
+                  item.name,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item.desc),
+                    SizedBox(height: 5),
+                    Text(
+                      "Stock: ${item.stock}",
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        cartContoller.removeFromCart(item);
+                      },
+                      child: Container(
+                        height: 40,
+                        width: 200,
+                        alignment: Alignment.center,
+                        color: primaryColor,
+                        child: Text(
+                          "remove from cart",
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                trailing: Text(
+                  "Ksh ${item.price}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+              );
             },
-          ),
-        ],
-      ),
+          );
+        }
+      }),
     );
   }
 }

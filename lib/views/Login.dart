@@ -130,11 +130,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (usernameController.text.isEmpty) {
                     Get.snackbar("Error", "Enter email address");
                   } else if (passwordController.text.isEmpty) {
-                    Get.snackbar("Erro", "Enter password");
+                    Get.snackbar("Error", "Enter password");
                   } else {
                     final response = await http.get(
                       Uri.parse(
-                        "http://10.7.2.210/rootFolder/login.php?emailaddress=${usernameController.text}&password=${passwordController.text}",
+                        "http://10.7.21.26/rootFolder/login.php?emailaddress=${usernameController.text}&password=${passwordController.text}",
                       ),
                     );
                     if (response.statusCode == 200) {

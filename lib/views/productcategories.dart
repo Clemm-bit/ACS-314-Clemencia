@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/configs/colors.dart';
+import 'package:flutter_application_1/controllers/cartcontroller.dart';
 import 'package:flutter_application_1/models/productsmodel.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:http/http.dart' as http;
 
+//CartContoller cartContoller = Get.find();
 var myproducts = [];
 bool loaded = false;
 
@@ -22,6 +25,8 @@ class ProductsCategoriesSCreen extends StatefulWidget {
 }
 
 class _ProductsCategoriesSCreenState extends State<ProductsCategoriesSCreen> {
+  CartContoller cartContoller = Get.find();
+
   @override
   void initState() {
     fetchProducts();
@@ -32,7 +37,7 @@ class _ProductsCategoriesSCreenState extends State<ProductsCategoriesSCreen> {
     myproducts.clear();
     var response = await http.get(
       Uri.parse(
-        "http://10.7.2.210/rootFolder/products.php?categories_id=${widget.categories_id}",
+        "http://10.7.21.26/rootFolder/products.php?categories_id=${widget.categories_id}",
       ),
     );
 
@@ -93,7 +98,7 @@ class _ProductsCategoriesSCreenState extends State<ProductsCategoriesSCreen> {
                         // ignore: prefer_interpolation_to_compose_strings
                         Image.network(
                           // ignore: prefer_interpolation_to_compose_strings
-                          "http://10.7.2.210/rootFolder/Image.php?image=" +
+                          "http://10.7.21.26/rootFolder/Image.php?image=" +
                               myproducts[index].image,
                           width: 100,
                           height: 100,
@@ -131,16 +136,22 @@ class _ProductsCategoriesSCreenState extends State<ProductsCategoriesSCreen> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             SizedBox(height: 5.0),
-                            Container(
-                              height: 40,
-                              width: 100,
-                              alignment: Alignment.center,
-                              color: primaryColor,
-                              child: Text(
-                                "Add to cart",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.white,
+                            GestureDetector(
+                              onTap: () {
+                                cartContoller.addToCart(myproducts[index]);
+                                Get.toNamed("/cart");
+                              },
+                              child: Container(
+                                height: 40,
+                                width: 100,
+                                alignment: Alignment.center,
+                                color: primaryColor,
+                                child: Text(
+                                  "Add to cart",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
