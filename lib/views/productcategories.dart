@@ -7,11 +7,12 @@ import 'package:flutter_application_1/models/productsmodel.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 //CartContoller cartContoller = Get.find();
-var myproducts = [];
-bool loaded = false;
+//var myproducts = [];
+//bool loaded = false;
 
 class ProductsCategoriesSCreen extends StatefulWidget {
   final String categories_id = Get.parameters["categories_id"] ?? "";
@@ -25,7 +26,11 @@ class ProductsCategoriesSCreen extends StatefulWidget {
 }
 
 class _ProductsCategoriesSCreenState extends State<ProductsCategoriesSCreen> {
-  CartContoller cartContoller = Get.find();
+  var myproducts = [];
+  bool loaded = false;
+  CartController cartContoller = Get.find();
+  final box = GetStorage();
+  late final String userId = box.read("userId");
 
   @override
   void initState() {
@@ -33,37 +38,94 @@ class _ProductsCategoriesSCreenState extends State<ProductsCategoriesSCreen> {
     super.initState();
   }
 
-  fetchProducts() async {
-    myproducts.clear();
-    var response = await http.get(
-      Uri.parse(
-        "http://10.7.21.26/rootFolder/products.php?categories_id=${widget.categories_id}",
-      ),
-    );
+  // fetchProducts() async {
+  //   myproducts.clear();
+  //   var response = await http.get(
+  //     Uri.parse(
+  //       "http://10.221.36.36/rootFolder/products.php?categories_id=${widget.categories_id}",
+  //     ),
+  //   );
 
-    print("Status code: ${response.statusCode}");
-    print("Response body: ${response.body}");
-    if (response.statusCode == 200) {
-      var serverData = jsonDecode(response.body);
-      var productData = serverData["data"];
-      for (var product in productData) {
-        myproducts.add(
-          Products(
-            name: product["product_name"],
-            desc: product["description"],
-            image: product["image_url"],
-            price: product["price"],
-            stock: product["stock"],
-            categories_id: product["categories_id"],
-          ),
-        );
+  //   print("Status code: ${response.statusCode}");
+  //   print("Response body: ${response.body}");
+  //   if (response.statusCode == 200) {
+  //     var serverData = jsonDecode(response.body);
+  //     var productData = serverData["data"];
+  //     for (var product in productData) {
+  //       myproducts.add(
+  //         Products(
+  //           name: product["product_name"],
+  //           id: product["product_id"],
+  //           cart_id: product["cart_id"],
+  //           desc: product["description"],
+  //           image: product["image_url"],
+  //           price: product["price"],
+  //           quantity: product["quantity"],
+  //           categories_id: product["categories_id"],
+  //         ),
+  //       );
+  //     }
+  //     setState(() {
+  //       loaded = true;
+  //     });
+  //   } else {
+  //     Get.snackbar("Error", "server error");
+  //   }
+  // }
+  fetchProducts() async {
+    setState(() {
+      loaded = false;
+    });
+
+    try {
+      myproducts.clear();
+
+      var response = await http.get(
+        Uri.parse(
+          "http://10.7.24.12/rootFolder/products.php?categories_id=${widget.categories_id}",
+        ),
+      );
+
+      print("STATUS: ${response.statusCode}");
+      print("BODY: ${response.body}");
+
+      if (response.statusCode == 200) {
+        var serverData = jsonDecode(response.body);
+
+        var productData = serverData["data"];
+
+        if (productData == null) {
+          print("data is NULL");
+          setState(() => loaded = true);
+          return;
+        }
+
+        for (var product in productData) {
+          myproducts.add(
+            Products(
+              name: product["product_name"] ?? "",
+              id: product["product_id"] ?? "",
+              cart_id: "",
+              desc: product["description"] ?? "",
+              image: product["image_url"] ?? "",
+              price: product["price"].toString(),
+              quantity: product["quantity"].toString(),
+              categories_id: product["categories_id"] ?? "",
+            ),
+          );
+        }
+      } else {
+        Get.snackbar("Error", "Server error: ${response.statusCode}");
       }
-      setState(() {
-        loaded = true;
-      });
-    } else {
-      Get.snackbar("Error", "server error");
+    } catch (e) {
+      print("ERROR: $e");
+      Get.snackbar("Error", e.toString());
     }
+
+    // ✅ ALWAYS STOP LOADER (VERY IMPORTANT)
+    setState(() {
+      loaded = true;
+    });
   }
 
   Widget build(BuildContext context) {
@@ -98,7 +160,7 @@ class _ProductsCategoriesSCreenState extends State<ProductsCategoriesSCreen> {
                         // ignore: prefer_interpolation_to_compose_strings
                         Image.network(
                           // ignore: prefer_interpolation_to_compose_strings
-                          "http://10.7.21.26/rootFolder/Image.php?image=" +
+                          "http://10.7.24.12/rootFolder/Image.php?image=" +
                               myproducts[index].image,
                           width: 100,
                           height: 100,
@@ -137,8 +199,11 @@ class _ProductsCategoriesSCreenState extends State<ProductsCategoriesSCreen> {
                             ),
                             SizedBox(height: 5.0),
                             GestureDetector(
-                              onTap: () {
-                                cartContoller.addToCart(myproducts[index]);
+                              onTap: () async {
+                                await cartContoller.addToCartAPI(
+                                  userId,
+                                  myproducts[index].id,
+                                );
                                 Get.toNamed("/cart");
                               },
                               child: Container(

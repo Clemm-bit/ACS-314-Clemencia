@@ -1,8 +1,12 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/configs/colors.dart';
+import 'package:flutter_application_1/controllers/profilecontroller.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,7 +16,13 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final controller = Get.put(ProfileController());
   @override
+  void initState() {
+    super.initState();
+    controller.fetchProfile();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       // bottomNavigationBar: CurvedNavigationBar(
@@ -47,127 +57,220 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // ),
       appBar: AppBar(
         backgroundColor: primaryColor,
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              "Welcome Clemencia!",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
-            ),
-            SizedBox(height: 10.0),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
-              child: Text(
-                "clemencianyaboke33@gmail.com",
+        title: Obx(
+          () => Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                "hello ${controller.firstname.value}",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
               ),
-            ),
-          ],
-        ),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: CircleAvatar(
-                radius: 62.0,
-                backgroundColor: Colors.black,
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundImage: AssetImage("clemprofile.jpg"),
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
+                child: Text(
+                  controller.email.value,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
                 ),
               ),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                "Name",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
-              ),
             ],
           ),
-          Row(
-            children: [
-              Text("Clemencia Nyaboke"),
-              SizedBox(width: 8.0),
-              Icon(Icons.edit, size: 20),
-            ],
-          ),
-          SizedBox(height: 10.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                "Phone number",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text("0794415261"),
-              SizedBox(width: 8.0),
-              Icon(Icons.edit, size: 20),
-            ],
-          ),
-          SizedBox(height: 10.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                "Email Adress",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text("Clemencianyaboke33@gmail.com"),
-              SizedBox(width: 8.0),
-              Icon(Icons.edit, size: 20),
-            ],
-          ),
-          SizedBox(height: 10.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                "Gender",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text("Female"),
-              SizedBox(width: 8.0),
-              Icon(Icons.edit, size: 20),
-            ],
-          ),
-          SizedBox(height: 10.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                "Date of Birth",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text("25-10-2005"),
-              SizedBox(width: 8.0),
-              Icon(Icons.edit, size: 20),
-            ],
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              controller.logout();
+            },
+            icon: Icon(Icons.logout),
           ),
         ],
       ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return Center(child: CircularProgressIndicator());
+        }
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: CircleAvatar(
+                    radius: 62.0,
+                    backgroundColor: Colors.black,
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundImage: controller.profileUrl.value.isNotEmpty
+                          ? NetworkImage(
+                              "http://10.7.24.12/rootFolder/Image.php?image=${controller.profileUrl.value}",
+                            )
+                          : AssetImage("assets/default.png") as ImageProvider,
+                    ),
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Name",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    "${controller.firstname.value} ${controller.secondname.value}",
+                  ),
+                  SizedBox(width: 8.0),
+                ],
+              ),
+              SizedBox(height: 10.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Phone number",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+                  ),
+                ],
+              ),
+              Obx(() {
+                return Row(
+                  children: [
+                    Expanded(
+                      child: controller.isEditingPhone.value
+                          ? TextField(
+                              controller: controller.phoneController,
+                              decoration: InputDecoration(
+                                hintText: "Enter phone number",
+                              ),
+                            )
+                          : Text(controller.phone.value),
+                    ),
+
+                    IconButton(
+                      icon: Icon(
+                        controller.isEditingPhone.value
+                            ? Icons.check
+                            : Icons.edit,
+                      ),
+                      onPressed: () async {
+                        if (controller.isEditingPhone.value) {
+                          await controller.updateProfile();
+                        } else {
+                          // Put current value into TextField
+                          controller.phoneController.text =
+                              controller.phone.value;
+                        }
+
+                        controller.isEditingPhone.toggle();
+                      },
+                    ),
+                  ],
+                );
+              }),
+              SizedBox(height: 10.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Email Adress",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+                  ),
+                ],
+              ),
+              Row(
+                children: [Text(controller.email.value), SizedBox(width: 8.0)],
+              ),
+              SizedBox(height: 10.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Gender",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+                  ),
+                ],
+              ),
+              Obx(() {
+                return Row(
+                  children: [
+                    Expanded(
+                      child: controller.isEditingGender.value
+                          ? TextField(
+                              controller: controller.genderController,
+                              decoration: InputDecoration(hintText: "gender"),
+                            )
+                          : Text(controller.gender.value),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        controller.isEditingGender.value
+                            ? Icons.check
+                            : Icons.edit,
+                      ),
+                      onPressed: () async {
+                        if (controller.isEditingGender.value) {
+                          await controller.updateProfile();
+                        } else {
+                          controller.genderController.text =
+                              controller.gender.value;
+                        }
+                        controller.isEditingGender.toggle();
+                      },
+                    ),
+                  ],
+                );
+              }),
+              SizedBox(height: 10.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Date of Birth",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+                  ),
+                ],
+              ),
+              Obx(() {
+                return Row(
+                  children: [
+                    Expanded(
+                      child: controller.isEditingDob.value
+                          ? TextField(
+                              controller: controller.dobController,
+                              decoration: InputDecoration(
+                                hintText: "Enter date of birth",
+                              ),
+                            )
+                          : Text(controller.dob.value),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        controller.isEditingDob.value
+                            ? Icons.check
+                            : Icons.edit,
+                      ),
+                      onPressed: () async {
+                        if (controller.isEditingDob.value) {
+                          await controller.updateProfile();
+                        } else {
+                          controller.dobController.text = controller.dob.value;
+                        }
+                        controller.isEditingDob.toggle();
+                      },
+                    ),
+                  ],
+                );
+              }),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

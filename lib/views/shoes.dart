@@ -30,7 +30,7 @@ class _shoesScreenState extends State<shoesScreen> {
 
   fetchShoes() async {
     var response = await http.get(
-      Uri.parse("http://10.7.2.210/rootFolder/products.php?categories_id=2"),
+      Uri.parse("http://10.7.20.34/rootFolder/products.php?categories_id=2"),
     );
 
     print("Status code: ${response.statusCode}");
@@ -42,10 +42,12 @@ class _shoesScreenState extends State<shoesScreen> {
         myShoes.add(
           Products(
             name: shoe["product_name"],
+            id: shoe["product_id"],
+            cart_id: shoe["cart_id"],
             desc: shoe["description"],
             image: shoe["image_url"],
             price: shoe["price"],
-            stock: shoe["stock"],
+            quantity: shoe["quantity"],
             categories_id: shoe["categories_id"],
           ),
         );
@@ -80,7 +82,7 @@ class _shoesScreenState extends State<shoesScreen> {
                       // ignore: prefer_interpolation_to_compose_strings
                       Image.network(
                         // ignore: prefer_interpolation_to_compose_strings
-                        "http://10.7.21.26/rootFolder/Image.php?image=" +
+                        "http://10.7.24.12/rootFolder/Image.php?image=" +
                             myShoes[index].image,
                         width: 100,
                         height: 100,

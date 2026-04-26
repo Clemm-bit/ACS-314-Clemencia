@@ -21,4 +21,5 @@ var routes = [
   GetPage(name: "/orders", page: () => OrdersScreen()),
   GetPage(name: "/shoes", page: () => shoesScreen()),
   GetPage(name: "/products", page: () => ProductsCategoriesSCreen()),
+  GetPage(name: "/orders", page: () => OrdersScreen()),
 ];

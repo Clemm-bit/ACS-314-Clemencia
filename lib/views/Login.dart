@@ -6,6 +6,7 @@ import 'package:flutter_application_1/controllers/logincontroller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 Logincontroller logincontroller = Get.put(Logincontroller());
@@ -20,6 +21,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final box = GetStorage();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,16 +136,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   } else {
                     final response = await http.get(
                       Uri.parse(
-                        "http://10.7.21.26/rootFolder/login.php?emailaddress=${usernameController.text}&password=${passwordController.text}",
+                        "http://10.7.24.12/rootFolder/login.php?emailaddress=${usernameController.text}&password=${passwordController.text}",
                       ),
                     );
                     if (response.statusCode == 200) {
                       final serverData = jsonDecode(response.body);
                       if (serverData['code'] == 1) {
-                        String emailaddress =
-                            serverData["userdetails"][0]["emailaddress"];
-                        print(emailaddress); //stored in shared pref
-                        Get.toNamed("/homescreen");
+                        var user = serverData["userdetails"][0];
+
+                        String userId = user["id"].toString();
+
+                        box.write("userId", userId);
+
+                        box.write("email", user["emailaddress"]);
+
+                        print("Saved userId: $userId");
+
+                        Get.offAllNamed("/homescreen");
                       } else {
                         Get.snackbar("Error", serverData["message"]);
                       }

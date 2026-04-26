@@ -5,6 +5,7 @@ import 'package:flutter_application_1/controllers/cartcontroller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get_storage/get_storage.dart';
 
 class CartsScreen extends StatefulWidget {
   const CartsScreen({super.key});
@@ -14,8 +15,16 @@ class CartsScreen extends StatefulWidget {
 }
 
 class _CartsScreenState extends State<CartsScreen> {
-  CartContoller cartContoller = Get.find();
+  final CartController cartController = Get.find();
+  final box = GetStorage();
+  late final String userId = box.read("userId");
+
   @override
+  void initState() {
+    super.initState();
+    cartController.fetchCart(userId);
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       // bottomNavigationBar: CurvedNavigationBar(
@@ -55,7 +64,10 @@ class _CartsScreenState extends State<CartsScreen> {
         ),
       ),
       body: Obx(() {
-        if (cartContoller.cartItems.isEmpty) {
+        if (cartController.isLoading.value) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (cartController.cartItems.isEmpty) {
           return Column(
             children: [
               Row(
@@ -88,64 +100,153 @@ class _CartsScreenState extends State<CartsScreen> {
             ],
           );
         } else {
-          return ListView.builder(
-            itemCount: cartContoller.cartItems.length,
-            itemBuilder: (context, index) {
-              final item = cartContoller.cartItems[index];
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: cartController.cartItems.length,
+                  itemBuilder: (context, index) {
+                    final item = cartController.cartItems[index];
 
-              return ListTile(
-                leading: Image.network(
-                  // ignore: prefer_interpolation_to_compose_strings
-                  "http://10.7.21.26/rootFolder/Image.php?image=" + item.image,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(Icons.broken_image);
+                    return ListTile(
+                      leading: Image.network(
+                        // ignore: prefer_interpolation_to_compose_strings
+                        "http://10.7.24.12/rootFolder/Image.php?image=" +
+                            item.image,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.broken_image);
+                        },
+                      ),
+
+                      title: Text(
+                        item.name,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.desc),
+                          SizedBox(height: 5),
+                          Text(
+                            "quantity: ${item.quantity}",
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.remove),
+                                onPressed: () {
+                                  cartController.removeFromCartAPI(
+                                    userId,
+                                    item.cart_id,
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.add),
+                                onPressed: () {
+                                  cartController.addToCartAPI(userId, item.id);
+                                },
+                              ),
+                            ],
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              cartController.removeFromCartAPI(
+                                userId,
+                                item.cart_id,
+                              );
+                            },
+                            child: Container(
+                              height: 40,
+                              width: 200,
+                              alignment: Alignment.center,
+                              color: primaryColor,
+                              child: Text(
+                                "remove from cart",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      trailing: Text(
+                        "Ksh ${item.price}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: primaryColor,
+                        ),
+                      ),
+                    );
                   },
                 ),
-
-                title: Text(
-                  item.name,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(top: BorderSide(color: Colors.grey)),
                 ),
-
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(item.desc),
-                    SizedBox(height: 5),
-                    Text(
-                      "Stock: ${item.stock}",
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Total:",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          "Ksh ${cartController.totalPrice.value}",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                        ),
+                      ],
                     ),
+
+                    SizedBox(height: 15),
+
                     GestureDetector(
                       onTap: () {
-                        cartContoller.removeFromCart(item);
+                        Get.toNamed("/orders");
                       },
                       child: Container(
-                        height: 40,
-                        width: 200,
+                        height: 50,
+                        width: double.infinity,
                         alignment: Alignment.center,
-                        color: primaryColor,
+                        decoration: BoxDecoration(
+                          color: primaryColor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: Text(
-                          "remove from cart",
-                          style: TextStyle(fontSize: 14, color: Colors.white),
+                          "Proceed to Checkout",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
-
-                trailing: Text(
-                  "Ksh ${item.price}",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor,
-                  ),
-                ),
-              );
-            },
+              ),
+            ],
           );
         }
       }),
