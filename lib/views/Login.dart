@@ -136,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   } else {
                     final response = await http.get(
                       Uri.parse(
-                        "http://10.7.24.12/rootFolder/login.php?emailaddress=${usernameController.text}&password=${passwordController.text}",
+                        "http://10.7.16.252/rootFolder/login.php?emailaddress=${usernameController.text}&password=${passwordController.text}",
                       ),
                     );
                     if (response.statusCode == 200) {

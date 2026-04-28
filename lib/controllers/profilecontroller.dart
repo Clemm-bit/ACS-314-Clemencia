@@ -32,7 +32,7 @@ class ProfileController extends GetxController {
       isLoading(true);
 
       var response = await http.get(
-        Uri.parse("http://10.7.24.12/rootFolder/profile.php?id=$userId"),
+        Uri.parse("http://10.7.16.252/rootFolder/profile.php?id=$userId"),
       );
 
       var data = jsonDecode(response.body);
@@ -59,7 +59,7 @@ class ProfileController extends GetxController {
     final userId = GetStorage().read("userId");
 
     var response = await http.post(
-      Uri.parse("http://10.7.24.12/rootFolder/updateprofile.php"),
+      Uri.parse("http://10.7.16.252/rootFolder/updateprofile.php"),
       body: {
         "id": userId.toString(),
         "phone": phoneController.text.isEmpty

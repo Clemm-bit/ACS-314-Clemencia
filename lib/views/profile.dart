@@ -104,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       radius: 60,
                       backgroundImage: controller.profileUrl.value.isNotEmpty
                           ? NetworkImage(
-                              "http://10.7.24.12/rootFolder/Image.php?image=${controller.profileUrl.value}",
+                              "http://10.7.16.252/rootFolder/Image.php?image=${controller.profileUrl.value}",
                             )
                           : AssetImage("assets/default.png") as ImageProvider,
                     ),

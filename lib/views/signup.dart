@@ -225,7 +225,7 @@ class _LoginScreenState extends State<SignUpScreen> {
                     try {
                       final response = await http.get(
                         Uri.parse(
-                          "http://10.7.24.12/rootFolder/create.php?firstname=${firstnameContoller.text}&secondname=${secondnameController.text}&emailaddress=${emailaddressController.text}&password=${passwordController.text}",
+                          "http://10.7.16.252/rootFolder/create.php?firstname=${firstnameContoller.text}&secondname=${secondnameController.text}&emailaddress=${emailaddressController.text}&password=${passwordController.text}",
                         ),
                       );
                       if (response.statusCode == 200) {

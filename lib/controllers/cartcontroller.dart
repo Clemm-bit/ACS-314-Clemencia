@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter_application_1/models/productsmodel.dart';
@@ -16,7 +17,7 @@ class CartController extends GetxController {
       isLoading(true);
 
       var url = Uri.parse(
-        "http://10.7.24.12/rootFolder/getcart.php?id=$userId",
+        "http://10.7.16.252/rootFolder/getcart.php?id=$userId",
       );
 
       var response = await http.get(url);
@@ -59,7 +60,7 @@ class CartController extends GetxController {
 
   Future<void> addToCartAPI(String userId, String productId) async {
     try {
-      var url = Uri.parse("http://10.7.24.12/rootFolder/addtocart.php");
+      var url = Uri.parse("http://10.7.16.252/rootFolder/addtocart.php");
 
       var response = await http.post(
         url,
@@ -78,7 +79,7 @@ class CartController extends GetxController {
 
   Future<void> removeFromCartAPI(String userId, String cartId) async {
     try {
-      var url = Uri.parse("http://10.7.24.12/rootFolder/removefromcart.php");
+      var url = Uri.parse("http://10.7.16.252/rootFolder/removefromcart.php");
 
       var response = await http.post(url, body: {"cart_id": cartId});
 
@@ -95,5 +96,24 @@ class CartController extends GetxController {
   void clearCart() {
     cartItems.clear();
     totalPrice.value = 0;
+  }
+
+  Future<void> checkout() async {
+    final userId = GetStorage().read("userId");
+
+    var response = await http.post(
+      Uri.parse("http://10.7.16.252/rootFolder/checkout.php"),
+      body: {"user_id": userId.toString()},
+    );
+
+    var data = jsonDecode(response.body);
+
+    if (data["status"] == "success") {
+      Get.snackbar("Success", "Order placed");
+
+      Get.toNamed("/orders");
+    } else {
+      Get.snackbar("Error", data["message"]);
+    }
   }
 }

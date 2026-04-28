@@ -82,7 +82,7 @@ class _ProductsCategoriesSCreenState extends State<ProductsCategoriesSCreen> {
 
       var response = await http.get(
         Uri.parse(
-          "http://10.7.24.12/rootFolder/products.php?categories_id=${widget.categories_id}",
+          "http://10.7.16.252/rootFolder/products.php?categories_id=${widget.categories_id}",
         ),
       );
 
@@ -160,7 +160,7 @@ class _ProductsCategoriesSCreenState extends State<ProductsCategoriesSCreen> {
                         // ignore: prefer_interpolation_to_compose_strings
                         Image.network(
                           // ignore: prefer_interpolation_to_compose_strings
-                          "http://10.7.24.12/rootFolder/Image.php?image=" +
+                          "http://10.7.16.252/rootFolder/Image.php?image=" +
                               myproducts[index].image,
                           width: 100,
                           height: 100,
