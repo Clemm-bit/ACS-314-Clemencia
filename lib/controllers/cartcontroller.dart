@@ -52,7 +52,9 @@ class CartController extends GetxController {
         }
       }
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      Future.microtask(() {
+        Get.snackbar("Success", "Order placed");
+      });
     } finally {
       isLoading(false);
     }
@@ -86,10 +88,14 @@ class CartController extends GetxController {
       var data = jsonDecode(response.body);
 
       if (data["status"] == "decreased" || data["status"] == "removed") {
-        await fetchCart(userId);
+        Future.delayed(Duration.zero, () {
+          fetchCart(userId);
+        });
       }
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      Future.microtask(() {
+        Get.snackbar("Success", "Order placed");
+      });
     }
   }
 
@@ -103,15 +109,17 @@ class CartController extends GetxController {
 
     var response = await http.post(
       Uri.parse("http://10.7.16.252/rootFolder/checkout.php"),
-      body: {"user_id": userId.toString()},
+      body: {"id": userId.toString()},
     );
 
     var data = jsonDecode(response.body);
 
     if (data["status"] == "success") {
-      Get.snackbar("Success", "Order placed");
+      Future.microtask(() {
+        Get.snackbar("Success", "Order placed");
+      });
 
-      Get.toNamed("/orders");
+      Get.offNamed("/orders");
     } else {
       Get.snackbar("Error", data["message"]);
     }

@@ -222,8 +222,8 @@ class _CartsScreenState extends State<CartsScreen> {
                     SizedBox(height: 15),
 
                     GestureDetector(
-                      onTap: () {
-                        Get.toNamed("/orders");
+                      onTap: () async {
+                        await cartController.checkout();
                       },
                       child: Container(
                         height: 50,
